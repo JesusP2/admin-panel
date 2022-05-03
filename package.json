@@ -12,6 +12,10 @@
     "migrate:dev": "dotenv -e .env.development -- npx prisma migrate dev"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.1.1",
+    "@fortawesome/free-regular-svg-icons": "^6.1.1",
+    "@fortawesome/free-solid-svg-icons": "^6.1.1",
+    "@fortawesome/react-fontawesome": "^0.1.18",
     "@prisma/client": "3.13.0",
     "daisyui": "^2.14.3",
     "firebase": "^9.7.0",

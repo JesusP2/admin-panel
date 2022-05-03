@@ -12,24 +12,21 @@ datasource db {
 
 model Task {
         id String @id @default(uuid())
-        project Project @relation(fields: [projectId], references: [id])
-        projectId String @map("project_id")
-        tags Tag[] @relation(references: [id])
-        tagsId String[] @map("tags_id")
-        uid String[]
         name String
+        uid String[]
         description String
         duration DateTime
         updatedAt DateTime @default(now()) @map("updated_at")
         createdAt DateTime @default(now()) @map("created_at")
+        project Project @relation(fields: [projectId], references: [id])
+        projectId String @map("project_id")
+        tags Tag[] @relation(references: [id])
+        tagsId String[] @map("tags_id")
         @@map("tasks")
 }
-
 model Project {
         id String @id @default(uuid())
         name String 
-        tags Tag[] @relation(references: [id])
-        tagsId String[] @map("tags_id")
         description String
         uid String[]
         duration DateTime
@@ -37,6 +34,8 @@ model Project {
         updatedAt DateTime @default(now()) @map("updated_at")
         createdAt DateTime @default(now()) @map("created_at")
         Task Task[]
+        tags Tag[] @relation(references: [id])
+        tagsId String[] @map("tags_id")
         @@map("projects")
 }
 
