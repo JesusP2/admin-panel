@@ -9,12 +9,13 @@ export default function Sidebar({
 }) {
     return (
         <div
+            data-testid="sidebar"
             className={`bg-gray-800 shadow-xl overflow-hidden flex flex-none flex-col justify-between h-full ${
                 showSidebar ? 'w-64' : 'w-16'
             } relative duration-300`}
         >
             <div className={`h-full ${showSidebarDelay ? 'hidden' : ''}`}>
-                <div className="h-16 w-full flex items-center justify-center">
+                <div className="h-16 w-full flex items-center justify-center" data-testid="sidebar-icon">
                     <div className="text-3xl bg-gray-300 rounded-full h-10 w-10 grid place-items-center text-gray-700">
                         A
                     </div>
@@ -50,7 +51,7 @@ export default function Sidebar({
                             <FontAwesomeIcon icon={faUser} />
                             <span className="text-sm  ml-2">Usuarios</span>
                         </div>
-                        <div className="py-1 px-3 bg-gray-700 rounded text-gray-500 flex items-center justify-center text-xs">
+                        <div className="py-1 px-3 bg-gray-700 rounded text-gray-500 flex items-center justify-center text-xs" data-testid="users-counter">
                             5
                         </div>
                     </li>
@@ -59,7 +60,7 @@ export default function Sidebar({
                             <FontAwesomeIcon icon={faThumbtack} />
                             <span className="text-sm  ml-2">Tareas</span>
                         </div>
-                        <div className="py-1 px-3 bg-gray-700 rounded text-gray-500 flex items-center justify-center text-xs">
+                        <div className="py-1 px-3 bg-gray-700 rounded text-gray-500 flex items-center justify-center text-xs" data-testid="tasks-counter">
                             5
                         </div>
                     </li>
@@ -68,14 +69,14 @@ export default function Sidebar({
                             <FontAwesomeIcon icon={faDiagramProject} />
                             <span className="text-sm  ml-2">Proyectos</span>
                         </div>
-                        <div className="py-1 px-3 bg-gray-700 rounded text-gray-500 flex items-center justify-center text-xs">
+                        <div className="py-1 px-3 bg-gray-700 rounded text-gray-500 flex items-center justify-center text-xs" data-testid="projects-counter">
                             8
                         </div>
                     </li>
                 </ul>
             </div>
             <div className={`flex justify-center mb-4 px-4 ${showSidebarDelay ? '' : 'hidden'}`}>
-                <div className="relative bg-gray-800">
+                <div className="relative bg-gray-800" data-testid="search-input">
                     <div className="text-gray-500 absolute ml-4 inset-0 m-auto w-4 h-4">
                         <FontAwesomeIcon icon={faMagnifyingGlass} className="relative bottom-1 opacity-60" />
                     </div>
