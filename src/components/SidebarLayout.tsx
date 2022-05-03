@@ -1,5 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faThumbtack, faDiagramProject, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faThumbtack, faDiagramProject, faMagnifyingGlass, faHouse } from '@fortawesome/free-solid-svg-icons';
+import { useState } from 'react';
+import Link from 'next/link';
 export default function Sidebar({
     showSidebar,
     showSidebarDelay,
@@ -7,6 +9,7 @@ export default function Sidebar({
     showSidebar: boolean;
     showSidebarDelay: boolean;
 }) {
+    const [tab, setTab] = useState(0);
     return (
         <div
             data-testid="sidebar"
@@ -20,21 +23,62 @@ export default function Sidebar({
                         A
                     </div>
                 </div>
-                <ul className="mt-[52px] flex flex-col items-center">
-                    <li className="text-gray-300 hover:text-gray-500 cursor-pointer mb-8">
-                        <div className="flex items-center">
-                            <FontAwesomeIcon icon={faUser} />
-                        </div>
+                <ul className="mt-[50px] flex flex-col items-center">
+                    <li
+                        onClick={() => setTab(0)}
+                        className={`hover:text-gray-500 cursor-pointer mb-[30px] ${
+                            tab === 0 ? 'text-gray-300' : 'text-gray-600'
+                        }`}
+                    >
+                        <Link href="/admin">
+                            <a>
+                                <div className="flex items-center">
+                                    <FontAwesomeIcon icon={faHouse} />
+                                </div>
+                            </a>
+                        </Link>
                     </li>
-                    <li className="text-gray-600 hover:text-gray-500 cursor-pointer mb-8">
-                        <div className="flex items-center">
-                            <FontAwesomeIcon icon={faThumbtack} />
-                        </div>
+                    <li
+                        onClick={() => setTab(1)}
+                        className={`hover:text-gray-500 cursor-pointer mb-8 ${
+                            tab === 1 ? 'text-gray-300' : 'text-gray-600'
+                        }`}
+                    >
+                        <Link href="/admin/Users">
+                            <a>
+                                <div className="flex items-center">
+                                    <FontAwesomeIcon icon={faUser} />
+                                </div>
+                            </a>
+                        </Link>
                     </li>
-                    <li className="text-gray-600 hover:text-gray-500 cursor-pointer">
-                        <div className="flex items-center">
-                            <FontAwesomeIcon icon={faDiagramProject} />
-                        </div>
+                    <li
+                        onClick={() => setTab(2)}
+                        className={`hover:text-gray-500 cursor-pointer mb-8 ${
+                            tab === 2 ? 'text-gray-300' : 'text-gray-600'
+                        }`}
+                    >
+                        <Link href="/admin/Tasks">
+                            <a>
+                                <div className="flex items-center">
+                                    <FontAwesomeIcon icon={faThumbtack} />
+                                </div>
+                            </a>
+                        </Link>
+                    </li>
+                    <li
+                        onClick={() => setTab(3)}
+                        className={`hover:text-gray-500 cursor-pointer mb-8 ${
+                            tab === 3 ? 'text-gray-300' : 'text-gray-600'
+                        }`}
+                    >
+                        <Link href="/admin/Projects">
+                            <a>
+                                <div className="flex items-center">
+                                    <FontAwesomeIcon icon={faDiagramProject} />
+                                </div>
+                            </a>
+                        </Link>
                     </li>
                 </ul>
             </div>
@@ -46,32 +90,83 @@ export default function Sidebar({
                     <h1 className="text-xl font-black ml-2 whitespace-nowrap">Admin Panel</h1>
                 </div>
                 <ul className="mt-12 px-8">
-                    <li className="flex w-full justify-between text-gray-300 hover:text-gray-500 cursor-pointer items-center mb-6">
-                        <div className="flex items-center">
-                            <FontAwesomeIcon icon={faUser} />
-                            <span className="text-sm  ml-2">Usuarios</span>
-                        </div>
-                        <div className="py-1 px-3 bg-gray-700 rounded text-gray-500 flex items-center justify-center text-xs" data-testid="users-counter">
-                            5
-                        </div>
+                    <li
+                        onClick={() => setTab(0)}
+                        className={`hover:text-gray-500 cursor-pointer mb-6 ${
+                            tab === 0 ? 'text-gray-300' : 'text-gray-600'
+                        }`}
+                    >
+                        <Link href="/admin">
+                            <a className='flex w-full justify-between items-center'>
+                                <div className="flex items-center">
+                                    <FontAwesomeIcon icon={faHouse} />
+                                    <span className="text-sm  ml-2">Inicio</span>
+                                </div>
+                            </a>
+                        </Link>
                     </li>
-                    <li className="flex w-full justify-between text-gray-600 hover:text-gray-500 cursor-pointer items-center mb-6">
-                        <div className="flex items-center">
-                            <FontAwesomeIcon icon={faThumbtack} />
-                            <span className="text-sm  ml-2">Tareas</span>
-                        </div>
-                        <div className="py-1 px-3 bg-gray-700 rounded text-gray-500 flex items-center justify-center text-xs" data-testid="tasks-counter">
-                            5
-                        </div>
+                    <li
+                        onClick={() => setTab(1)}
+                        className={`hover:text-gray-500 cursor-pointer mb-6 ${
+                            tab === 1 ? 'text-gray-300' : 'text-gray-600'
+                        }`}
+                    >
+                        <Link href="/admin/Users">
+                            <a className='flex w-full justify-between items-center'>
+                                <div className="flex items-center">
+                                    <FontAwesomeIcon icon={faUser} />
+                                    <span className="text-sm  ml-2">Usuarios</span>
+                                </div>
+                                <div
+                                    className="py-1 px-3 bg-gray-700 rounded text-gray-500 flex items-center justify-center text-xs"
+                                    data-testid="users-counter"
+                                >
+                                    5
+                                </div>
+                            </a>
+                        </Link>
                     </li>
-                    <li className="flex w-full justify-between text-gray-600 hover:text-gray-500 cursor-pointer items-center mb-6">
-                        <div className="flex items-center">
-                            <FontAwesomeIcon icon={faDiagramProject} />
-                            <span className="text-sm  ml-2">Proyectos</span>
-                        </div>
-                        <div className="py-1 px-3 bg-gray-700 rounded text-gray-500 flex items-center justify-center text-xs" data-testid="projects-counter">
-                            8
-                        </div>
+                    <li
+                        onClick={() => setTab(2)}
+                        className={`hover:text-gray-500 cursor-pointer mb-6 ${
+                            tab === 2 ? 'text-gray-300' : 'text-gray-600'
+                        }`}
+                    >
+                        <Link href="/admin/Tasks">
+                            <a className='flex w-full justify-between items-center'>
+                                <div className="flex items-center">
+                                    <FontAwesomeIcon icon={faThumbtack} />
+                                    <span className="text-sm  ml-2">Tareas</span>
+                                </div>
+                                <div
+                                    className="py-1 px-3 bg-gray-700 rounded text-gray-500 flex items-center justify-center text-xs"
+                                    data-testid="tasks-counter"
+                                >
+                                    5
+                                </div>
+                            </a>
+                        </Link>
+                    </li>
+                    <li
+                        onClick={() => setTab(3)}
+                        className={`hover:text-gray-500 cursor-pointer mb-6 ${
+                            tab === 3 ? 'text-gray-300' : 'text-gray-600'
+                        }`}
+                    >
+                        <Link href="/admin/Projects">
+                            <a className='flex w-full justify-between items-center'>
+                                <div className="flex items-center">
+                                    <FontAwesomeIcon icon={faDiagramProject} />
+                                    <span className="text-sm  ml-2">Proyectos</span>
+                                </div>
+                                <div
+                                    className="py-1 px-3 bg-gray-700 rounded text-gray-500 flex items-center justify-center text-xs"
+                                    data-testid="projects-counter"
+                                >
+                                    8
+                                </div>
+                            </a>
+                        </Link>
                     </li>
                 </ul>
             </div>
