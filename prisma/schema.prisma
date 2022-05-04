@@ -1,48 +1,66 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
 }
 
 model Task {
-        id String @id @default(uuid())
-        name String
-        uid String[]
-        description String
-        duration DateTime
-        updatedAt DateTime @default(now()) @map("updated_at")
-        createdAt DateTime @default(now()) @map("created_at")
-        project Project @relation(fields: [projectId], references: [id])
-        projectId String @map("project_id")
-        tags Tag[] @relation(references: [id])
-        tagsId String[] @map("tags_id")
-        @@map("tasks")
+    id          String        @id @default(uuid())
+    name        String
+    uid         String[]
+    description String
+    isFinished  Boolean       @default(false) @map("is_finished")
+    duration    DateTime
+    updatedAt   DateTime      @default(now()) @map("updated_at")
+    createdAt   DateTime      @default(now()) @map("created_at")
+    project     Project       @relation(fields: [projectId], references: [id])
+    projectId   String        @map("project_id")
+    tags        TasksOnTags[]
+
+    @@map("tasks")
 }
+
 model Project {
-        id String @id @default(uuid())
-        name String 
-        description String
-        uid String[]
-        duration DateTime
-        targetRelease DateTime @map("target_release")
-        updatedAt DateTime @default(now()) @map("updated_at")
-        createdAt DateTime @default(now()) @map("created_at")
-        Task Task[]
-        tags Tag[] @relation(references: [id])
-        tagsId String[] @map("tags_id")
-        @@map("projects")
+    id          String           @id @default(uuid())
+    name        String
+    description String
+    uid         String[]
+    isFinished  Boolean          @default(false) @map("is_finished")
+    duration    DateTime
+    updatedAt   DateTime         @default(now()) @map("updated_at")
+    createdAt   DateTime         @default(now()) @map("created_at")
+    Task        Task[]
+    tags        ProjectsOnTags[]
+
+    @@map("projects")
 }
 
 model Tag {
-        id String @id @default(uuid())
-        name String
-        Task Task[]
-        Project Project[] 
-        @@map("tags")
+    id      String           @id @default(uuid())
+    name    String
+    Task    TasksOnTags[]
+    Project ProjectsOnTags[]
+
+    @@map("tags")
+}
+
+model TasksOnTags {
+    task   Task   @relation(fields: [taskId], references: [id])
+    taskId String
+    tag    Tag    @relation(fields: [tagId], references: [id])
+    tagId  String
+
+    @@id([taskId, tagId])
+}
+
+model ProjectsOnTags {
+    project   Project @relation(fields: [projectId], references: [id])
+    projectId String
+    tag       Tag     @relation(fields: [tagId], references: [id])
+    tagId     String
+
+    @@id([projectId, tagId])
 }
