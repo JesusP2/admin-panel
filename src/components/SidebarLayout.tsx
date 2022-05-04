@@ -29,6 +29,7 @@ export default function Sidebar({
                         className={`hover:text-gray-500 cursor-pointer mb-[30px] ${
                             tab === 0 ? 'text-gray-300' : 'text-gray-600'
                         }`}
+                        data-testid="home-tab-hidden"
                     >
                         <Link href="/admin">
                             <a>
@@ -43,6 +44,7 @@ export default function Sidebar({
                         className={`hover:text-gray-500 cursor-pointer mb-8 ${
                             tab === 1 ? 'text-gray-300' : 'text-gray-600'
                         }`}
+                        data-testid="user-tab-hidden"
                     >
                         <Link href="/admin/Users">
                             <a>
@@ -57,6 +59,7 @@ export default function Sidebar({
                         className={`hover:text-gray-500 cursor-pointer mb-8 ${
                             tab === 2 ? 'text-gray-300' : 'text-gray-600'
                         }`}
+                        data-testid="task-tab-hidden"
                     >
                         <Link href="/admin/Tasks">
                             <a>
@@ -71,6 +74,7 @@ export default function Sidebar({
                         className={`hover:text-gray-500 cursor-pointer mb-8 ${
                             tab === 3 ? 'text-gray-300' : 'text-gray-600'
                         }`}
+                        data-testid="project-tab-hidden"
                     >
                         <Link href="/admin/Projects">
                             <a>
@@ -95,6 +99,7 @@ export default function Sidebar({
                         className={`hover:text-gray-500 cursor-pointer mb-6 ${
                             tab === 0 ? 'text-gray-300' : 'text-gray-600'
                         }`}
+                        data-testid="home-tab"
                     >
                         <Link href="/admin">
                             <a className='flex w-full justify-between items-center'>
@@ -110,6 +115,7 @@ export default function Sidebar({
                         className={`hover:text-gray-500 cursor-pointer mb-6 ${
                             tab === 1 ? 'text-gray-300' : 'text-gray-600'
                         }`}
+                        data-testid="user-tab"
                     >
                         <Link href="/admin/Users">
                             <a className='flex w-full justify-between items-center'>
@@ -131,6 +137,7 @@ export default function Sidebar({
                         className={`hover:text-gray-500 cursor-pointer mb-6 ${
                             tab === 2 ? 'text-gray-300' : 'text-gray-600'
                         }`}
+                        data-testid="task-tab"
                     >
                         <Link href="/admin/Tasks">
                             <a className='flex w-full justify-between items-center'>
@@ -152,6 +159,7 @@ export default function Sidebar({
                         className={`hover:text-gray-500 cursor-pointer mb-6 ${
                             tab === 3 ? 'text-gray-300' : 'text-gray-600'
                         }`}
+                        data-testid="project-tab"
                     >
                         <Link href="/admin/Projects">
                             <a className='flex w-full justify-between items-center'>
