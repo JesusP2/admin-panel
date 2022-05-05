@@ -16,7 +16,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(200).json(users)
     }
 
-    res.status(501).end();
+    res.status(501).json({});
 }
 
 export default errorHandler(handler);
