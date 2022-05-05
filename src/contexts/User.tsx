@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useState } from 'react';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import type { User, CreateUser } from 'types';
 
 interface IContext {
@@ -68,6 +68,15 @@ export function UserProvider({ children }: { children: ReactNode }) {
         const fn = async () => fetch(`${url}/api/user/${id}`, { method: 'DELETE' });
         return fetchWrapper(fn);
     }
+
+    useEffect(() => {
+        findAllUsers()
+            .then((res) => {
+                const users = res.users.map((user: any) => ({...user, edit: false, totalTasks: 0, tasksCompleted: 0, currentProject: ""}))
+                setUsers(users)
+            })
+            .catch((err) => console.log(err));
+    }, []);
 
     const value: IContext = {
         users,

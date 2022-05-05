@@ -1,7 +1,7 @@
 import AdminLayout from 'components/AdminLayout';
 import UserTable from 'components/UserTable';
 import { useUser } from 'contexts/User';
-import { ReactElement, useEffect, useRef, useState } from 'react';
+import { ReactElement, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import { useForm } from 'react-hook-form';
@@ -9,18 +9,10 @@ import { toast } from 'react-toastify';
 import { User } from 'types';
 
 export default function Users() {
-    const { createUser, users, findAllUsers, edit, setEdit, setUsers, deleteUser, editableUser, setEditableUser } = useUser();
-    const { register, reset, resetField, handleSubmit } = useForm();
+    const { createUser, users, edit, setEdit, setUsers, deleteUser, editableUser, setEditableUser } = useUser();
+    const { register, resetField, handleSubmit } = useForm();
     const closeModal = useRef<HTMLLabelElement | null>(null);
 
-    useEffect(() => {
-        findAllUsers()
-            .then((res) => {
-                const users = res.users.map((user: any) => ({...user, edit: false, totalTasks: 0, tasksCompleted: 0, currentProject: ""}))
-                setUsers(users)
-            })
-            .catch((err) => console.log(err));
-    }, []);
     async function onSubmit(data: any) {
         try {
             const user = await createUser(data);
