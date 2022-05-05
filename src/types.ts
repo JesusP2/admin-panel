@@ -1,7 +1,11 @@
-export interface User {
-    id: string;
-    name: string;
+export interface CreateUser {
+    displayName: string;
     email: string;
+    password?: string;
+    phoneNumber?: string;
+}
+export interface User extends CreateUser {
+    uid: string;
     tasksCompleted: number;
     totalTasks: number;
     currentProject: string;

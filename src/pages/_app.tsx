@@ -1,5 +1,7 @@
 import type { AppProps } from 'next/app';
 import { AuthProvider } from 'contexts/Auth';
+import { TaskProvider } from 'contexts/Task';
+import { UserProvider } from 'contexts/User';
 import { ToastContainer } from 'react-toastify';
 import 'styles/global.css';
 import 'react-toastify/dist/ReactToastify.css';
@@ -20,8 +22,12 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
     return (
         <AuthProvider>
-            {getLayout(<Component {...pageProps} />)}
-            <ToastContainer />
+            <TaskProvider>
+                <UserProvider>
+                    {getLayout(<Component {...pageProps} />)}
+                </UserProvider>
+                <ToastContainer />
+            </TaskProvider>
         </AuthProvider>
     );
 }
