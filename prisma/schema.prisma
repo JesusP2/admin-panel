@@ -16,7 +16,7 @@ model Task {
     duration    DateTime
     updatedAt   DateTime      @default(now()) @map("updated_at")
     createdAt   DateTime      @default(now()) @map("created_at")
-    project     Project       @relation(fields: [projectId], references: [id])
+    project     Project       @relation(fields: [projectId], onDelete: Cascade, references: [id])
     projectId   String        @map("project_id")
     tags        TasksOnTags[]
 
@@ -48,18 +48,18 @@ model Tag {
 }
 
 model TasksOnTags {
-    task   Task   @relation(fields: [taskId], references: [id])
+    task   Task   @relation(fields: [taskId], onDelete: Cascade, references: [id])
     taskId String
-    tag    Tag    @relation(fields: [tagId], references: [id])
+    tag    Tag    @relation(fields: [tagId], onDelete: Cascade, references: [id])
     tagId  String
 
     @@id([taskId, tagId])
 }
 
 model ProjectsOnTags {
-    project   Project @relation(fields: [projectId], references: [id])
+    project   Project @relation(fields: [projectId], onDelete: Cascade, references: [id])
     projectId String
-    tag       Tag     @relation(fields: [tagId], references: [id])
+    tag       Tag     @relation(fields: [tagId], onDelete: Cascade, references: [id])
     tagId     String
 
     @@id([projectId, tagId])
