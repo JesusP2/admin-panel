@@ -3,13 +3,38 @@ import prisma from '../prisma';
 
 class TaskDao {
     async findAll() {
-        return prisma.task.findMany()
+        return prisma.task.findMany({
+            include: {
+                project: {
+                    select: {
+                        name: true,
+                    },
+                },
+                tags: {
+                    include: {
+                        tag: true,
+                    },
+                },
+            },
+        });
     }
 
     async findOne(taskId: string) {
         return prisma.task.findUnique({
             where: {
                 id: taskId,
+            },
+            include: {
+                project: {
+                    select: {
+                        name: true,
+                    },
+                },
+                tags: {
+                    include: {
+                        tag: true,
+                    },
+                },
             },
         });
     }
@@ -18,6 +43,18 @@ class TaskDao {
         return prisma.task.findMany({
             where: {
                 projectId,
+            },
+            include: {
+                project: {
+                    select: {
+                        name: true,
+                    },
+                },
+                tags: {
+                    include: {
+                        tag: true,
+                    },
+                },
             },
         });
     }
@@ -29,11 +66,37 @@ class TaskDao {
                     has: userId,
                 },
             },
+            include: {
+                project: {
+                    select: {
+                        name: true,
+                    },
+                },
+                tags: {
+                    include: {
+                        tag: true,
+                    },
+                },
+            },
         });
     }
 
     async createOne(task: Prisma.TaskCreateInput) {
-        return prisma.task.create({ data: task });
+        return prisma.task.create({
+            data: task,
+            include: {
+                project: {
+                    select: {
+                        name: true,
+                    },
+                },
+                tags: {
+                    include: {
+                        tag: true,
+                    },
+                },
+            },
+        });
     }
 
     async updateOne(taskId: string, task: Prisma.TaskUpdateInput) {

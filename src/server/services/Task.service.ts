@@ -1,32 +1,35 @@
-import {Prisma} from '@prisma/client'
-import taskDao from "server/daos/Task";
+import { Prisma } from '@prisma/client';
+import taskDao from 'server/daos/Task';
 class TaskService {
     async findAll() {
-        return taskDao.findAll()
+        return taskDao.findAll();
     }
     async findOne(id: string) {
-        return taskDao.findOne(id) 
+        return taskDao.findOne(id);
     }
 
     async findByProject(projectId: string) {
-        return taskDao.findByProject(projectId)
+        return taskDao.findByProject(projectId);
     }
 
     async findByUser(userId: string) {
-        return taskDao.findByUser(userId)
+        return taskDao.findByUser(userId);
     }
 
     async createOne(task: Prisma.TaskCreateInput) {
-        return taskDao.createOne(task)
+        if (task.tags) {
+            task.tags = { create: (task.tags as any).map((name: string) => ({ tag: { create: { name } } })) };
+        }
+        return taskDao.createOne(task);
     }
 
     async updateOne(id: string, task: Prisma.TaskUpdateInput) {
-        task.updatedAt = new Date().toISOString()
-        return taskDao.updateOne(id, task)
+        task.updatedAt = new Date().toISOString();
+        return taskDao.updateOne(id, task);
     }
 
     async deleteOne(taskId: string) {
-        return taskDao.deleteOne(taskId)
+        return taskDao.deleteOne(taskId);
     }
 }
 

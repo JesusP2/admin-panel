@@ -9,14 +9,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse<{ id: string } 
         const task = await taskService.findOne(id);
         return res.status(200).json(task);
     } else if (req.method === 'PUT') {
-        const { name, uid, description, duration, isFinished, tags } = req.body;
+        const { name, uid, description, duration, isFinished } = req.body;
         const task = await taskService.updateOne(id, {
             name,
             uid,
             description,
             duration,
             isFinished,
-            tags
         });
         return res.status(200).json({ id: task.id });
     } else if (req.method === 'DELETE') {
