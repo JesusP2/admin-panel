@@ -15,6 +15,7 @@ class ProjectService {
     }
 
     async updateOne(projectId: string, project:Prisma.ProjectUpdateInput) {
+        project.updatedAt = new Date().toISOString()
         return projectDao.updateOne(projectId, project)
     }
 

@@ -21,6 +21,7 @@ class TaskService {
     }
 
     async updateOne(id: string, task: Prisma.TaskUpdateInput) {
+        task.updatedAt = new Date().toISOString()
         return taskDao.updateOne(id, task)
     }
 
