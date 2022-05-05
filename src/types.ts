@@ -4,6 +4,27 @@ export interface CreateUser {
     password?: string;
     phoneNumber?: string;
 }
+
+export interface CreateTask {
+    name: string;
+    description: string;
+    uid: User[];
+    projectId: string;
+    project: {
+        name: string;
+    }
+    duration: string;
+    tags: { taskId: string; tagId: string; tag: { id: string; name: string } }[];
+}
+
+export interface CreateProject {
+    name: string;
+    description: string;
+    uid: User[];
+    duration: string;
+    tags: { taskId: string; tagId: string; tag: { id: string; name: string } }[];
+}
+
 export interface User extends CreateUser {
     uid: string;
     tasksCompleted: number;
@@ -12,26 +33,15 @@ export interface User extends CreateUser {
     edit: boolean;
 }
 
-export interface Task {
+export interface Task extends CreateTask {
     id: string;
-    name: string;
-    description: string;
-    users: User[];
-    project: Project;
-    duration: string;
-    tags: string[];
     createdAt: string;
     edit: boolean;
 }
 
-export interface Project {
+export interface Project extends CreateProject {
     id: string;
-    name: string;
-    description: string;
-    users: User[];
     numberOfTasks: number;
-    duration: string;
-    tags: string[];
     createdAt: string;
     edit: boolean;
 }
