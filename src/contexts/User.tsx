@@ -12,7 +12,7 @@ interface IContext {
     findAllUsers: () => Promise<any>;
     findUserById: (id: string) => Promise<any>;
     createUser: (user: CreateUser) => Promise<any>;
-    updateUser: (id: string, user: Partial<Omit<User, 'id' | 'createdAt' | 'edit'>>) => Promise<any>;
+    updateUser: (id: string, user: Partial<CreateUser>) => Promise<any>;
     deleteUser: (id: string) => Promise<any>;
 }
 
@@ -58,7 +58,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
         return res.json()
     }
 
-    async function updateUser(id: string, user: Partial<Omit<User, 'id' | 'createdAt' | 'edit'>>) {
+    async function updateUser(id: string, user: Partial<CreateUser>) {
         const res = await fetch(`${url}/api/user/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
