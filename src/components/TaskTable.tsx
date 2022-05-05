@@ -2,76 +2,57 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { Task } from 'types';
 import { useState } from 'react';
+import { useTask } from 'contexts/Task';
+import { toast } from 'react-toastify';
 
-const tasksFetched: Task[] = [
-    {
-        id: '1',
-        name: 'Tarea 1',
-        description: 'description tarea 1',
-        users: [],
-        project: {
-            id: '1',
-            name: 'projecto 1',
-            description: 'description proyecto 1',
-            users: [],
-            numberOfTasks: 33,
-            duration: '23 days',
-            tags: ['project', 'software'],
-            createdAt: 'hoy',
-            edit: false,
-        },
-        duration: '23 days',
-        tags: ['project', 'software'],
-        createdAt: 'hoy',
-        edit: false,
-    },
-    {
-        id: '2',
-        name: 'Tarea 2',
-        description: 'description tarea 2',
-        users: [],
-        project: {
-            id: '1',
-            name: 'projecto 1',
-            description: 'description proyecto 1',
-            users: [],
-            numberOfTasks: 33,
-            duration: '23 days',
-            tags: ['project', 'software'],
-            createdAt: 'hoy',
-            edit: false,
-        },
-        duration: '24 days',
-        tags: ['project', 'software'],
-        createdAt: 'hoy',
-        edit: false,
-    },
-];
 export default function TaskTable() {
-    const [tasks, setTasks] = useState(tasksFetched);
-
-    const [editableTask, setEditableTask] = useState<Task>({} as Task);
+    const { setEdit, edit, editableTask, setEditableTask, tasks, setTasks, updateTask } = useTask();
     function editTask(idx: number) {
-        if (editableTask.id !== tasks[idx].id && editableTask.edit) return;
+        if (!tasks) return;
+        if (edit) return;
         const task = tasks[idx];
-        task.edit = !task.edit;
-        if (task.edit) {
-            setEditableTask(task);
-        }
-        setTasks((prev) => [...prev.slice(0, idx), task, ...prev.slice(idx + 1)]);
+        task.edit = true;
+        setEdit(true);
+        setEditableTask(task);
+        setTasks([...tasks.slice(0, idx), task, ...tasks.slice(idx + 1)]);
     }
 
-    function saveRow(idx: number) {
-        setTasks((prev) => [...prev.slice(0, idx), { ...editableTask, edit: false }, ...prev.slice(idx + 1)]);
+    function closeEdit(idx: number) {
+        if (!tasks) return;
+        setEdit(false);
+        setTasks([...tasks.slice(0, idx), { ...tasks[idx], edit: false }, ...tasks.slice(idx + 1)]);
+        setEditableTask((prev) => ({ ...prev, edit: false }));
+    }
+
+    async function saveRow(idx: number) {
+        if (!tasks) return;
+        try {
+            const { name, description, duration, id } = editableTask;
+            await updateTask(id, { name, description, duration });
+            toast.success('Usuario actualizado');
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                toast.error(err.message);
+            }
+            return;
+        }
+        setEdit(false);
+        setEditableTask((prev) => ({ ...prev, edit: false }));
+        setTasks([...tasks.slice(0, idx), { ...editableTask, edit: false }, ...tasks.slice(idx + 1)]);
+    }
+
+    function getDurationInDays(date1: string, date2: string) {
+        const duration = new Date(date1).getTime() - new Date(date2).getTime();
+        return Math.ceil(duration / (1000 * 60 * 60 * 24)) + ' días';
     }
     return (
-        <div className="overflow-x-auto">
-            <table className="table table-compact table-zebra w-full table-fixed">
+        <div className="overflow-auto">
+            <table className="table table-zebra table-fixed table-compact w-full">
                 <thead>
                     <tr>
                         <th className="w-14"></th>
                         <th>Nombre</th>
-                        <th className="w-64">Descripción</th>
+                        <th className="max-w-64">Descripción</th>
                         <th className="w-32"># de usuarios</th>
                         <th>Proyecto</th>
                         <th>Duración</th>
@@ -80,7 +61,7 @@ export default function TaskTable() {
                     </tr>
                 </thead>
                 <tbody className="text-sm">
-                    {tasks.map(({id, name, description, users, project, duration, tags, createdAt, edit}, idx) => {
+                    {tasks?.map(({ id, name, description, uid, project, duration, tags, createdAt, edit }, idx) => {
                         if (edit) {
                             return (
                                 <tr key={id} className="hover">
@@ -88,7 +69,7 @@ export default function TaskTable() {
                                         <button onClick={() => saveRow(idx)}>
                                             <FontAwesomeIcon icon={faCheck} className="cursor-pointer text-green-600" />
                                         </button>
-                                        <button onClick={() => editTask(idx)} className="ml-2">
+                                        <button onClick={() => closeEdit(idx)} className="ml-2">
                                             <FontAwesomeIcon icon={faXmark} className="cursor-pointer text-red-600" />
                                         </button>
                                     </td>
@@ -110,31 +91,13 @@ export default function TaskTable() {
                                                 setEditableTask((prev) => ({ ...prev, description: e.target.value }))
                                             }
                                             className="bg-inherit input h-6 rounded-none pl-0"
-                                        >
-                                </textarea>
+                                        ></textarea>
                                     </td>
-                                    <td>
-                                        {users.length}
-                                    </td>
-                                    <td>
-                                        {project.name}
-                                    </td>
-                                    <td>
-                                        <input
-                                            size={18}
-                                            value={editableTask.duration}
-                                            onChange={(e) =>
-                                                setEditableTask((prev) => ({ ...prev, duration: e.target.value }))
-                                            }
-                                            className="bg-inherit input h-6 rounded-none pl-0"
-                                        />
-                                    </td>
-                                    <td>
-                                        {tags.length}
-                                    </td>
-                                    <td>
-                                        {createdAt}
-                                    </td>
+                                    <td>{uid.length}</td>
+                                    <td>{project.name}</td>
+                                    <td>{getDurationInDays(duration, createdAt)}</td>
+                                    <td>{tags.length}</td>
+                                    <td>{createdAt.slice(0, 10)}</td>
                                 </tr>
                             );
                         }
@@ -146,12 +109,18 @@ export default function TaskTable() {
                                     </button>
                                 </td>
                                 <td>{name}</td>
-                                <td>{description}</td>
-                                <td>{users.length}</td>
+                                <td className="whitespace-normal">{description}</td>
+                                <td>{uid.length}</td>
                                 <td>{project.name}</td>
-                                <td>{duration}</td>
-                                <td>{tags.length}</td>
-                                <td>{createdAt}</td>
+                                <td>{getDurationInDays(duration, createdAt)}</td>
+                                <td>
+                                    <ul>
+                                        {tags.map((tag) => (
+                                            <li>{tag.tag.name}</li>
+                                        ))}
+                                    </ul>
+                                </td>
+                                <td>{createdAt.slice(0, 10)}</td>
                             </tr>
                         );
                     })}
