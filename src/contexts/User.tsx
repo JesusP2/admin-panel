@@ -1,7 +1,6 @@
 import { createContext, ReactNode, useContext, useState } from 'react';
 import type { User, CreateUser } from 'types';
 
-
 interface IContext {
     users: null | User[];
     setUsers: React.Dispatch<React.SetStateAction<User[] | null>>;
@@ -16,69 +15,60 @@ interface IContext {
     deleteUser: (id: string) => Promise<any>;
 }
 
-const UserContext = createContext({} as IContext)
+const UserContext = createContext({} as IContext);
 
 export function useUser() {
-    return useContext(UserContext)
+    return useContext(UserContext);
 }
 
 const url = 'http://localhost:3000';
 export function UserProvider({ children }: { children: ReactNode }) {
-    const [users, setUsers] = useState<null | User[]>([])
-    const [edit, setEdit] = useState(false)
+    const [users, setUsers] = useState<null | User[]>([]);
+    const [edit, setEdit] = useState(false);
     const [editableUser, setEditableUser] = useState<User>({} as User);
 
-    async function findAllUsers() {
-        const res = await fetch(`${url}/api/user`);
+    async function fetchWrapper(fn: () => Promise<any>) {
+        const res = await fn();
         if (!res.ok) {
-            throw new Error((await res.json()).error)
+            throw new Error((await res.json()).error);
         }
-        return res.json()
+        return res.json();
+    }
+    async function findAllUsers() {
+        const fn = async () => fetch(`${url}/api/user`);
+        return fetchWrapper(fn);
     }
 
     async function findUserById(id: string) {
-        const res = await fetch(`${url}/api/user/${id}`);
-        if (!res.ok) {
-            throw new Error((await res.json()).error)
-        }
-
-        return res.json()
+        const fn = async () => fetch(`${url}/api/user/${id}`);
+        return fetchWrapper(fn);
     }
 
     async function createUser(user: CreateUser) {
-        const res = await fetch(`${url}/api/user`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(user),
-        });
-
-        if (!res.ok) {
-            throw new Error((await res.json()).error)
-        }
-        return res.json()
+        const fn = async () =>
+            fetch(`${url}/api/user`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(user),
+            });
+        return fetchWrapper(fn);
     }
 
     async function updateUser(id: string, user: Partial<CreateUser>) {
-        const res = await fetch(`${url}/api/user/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(user),
-        });
-
-        if (!res.ok) {
-            throw new Error((await res.json()).error)
-        }
-        return res.json()
+        const fn = async () =>
+            fetch(`${url}/api/user/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(user),
+            });
+        return fetchWrapper(fn);
     }
 
     async function deleteUser(id: string) {
-        const res = await fetch(`${url}/api/user/${id}`, { method: 'DELETE' });
-        if (!res.ok) {
-            throw new Error((await res.json()).error)
-        }
-        return res.json()
+        const fn = async () => fetch(`${url}/api/user/${id}`, { method: 'DELETE' });
+        return fetchWrapper(fn);
     }
-    
+
     const value: IContext = {
         users,
         setUsers,
@@ -90,8 +80,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
         findUserById,
         createUser,
         updateUser,
-        deleteUser
-    }
+        deleteUser,
+    };
 
     return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }
