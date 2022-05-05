@@ -21,7 +21,7 @@ export function useUser() {
     return useContext(UserContext);
 }
 
-const url = 'http://localhost:3000';
+const url = process.env.NEXT_PUBLIC_HOST
 export function UserProvider({ children }: { children: ReactNode }) {
     const [users, setUsers] = useState<null | User[]>([]);
     const [edit, setEdit] = useState(false);
