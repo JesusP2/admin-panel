@@ -10,13 +10,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse<{ id: string } 
             name,
         });
 
-        return res.status(201).json({ id: tag.id });
+        return res.status(201).json(tag);
     } else if (req.method === 'GET') {
         const tags = await tagService.findAll()
         return res.status(200).json(tags)
     }
 
-    res.status(501).end();
+    res.status(501).json({});
 }
 
 export default errorHandler(handler);

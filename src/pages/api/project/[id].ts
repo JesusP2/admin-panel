@@ -14,10 +14,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<{ id: string } 
         return res.status(200).json({id: project.id})
     } else if (req.method === 'DELETE') {
         await projectService.deleteOne(id)
-        return res.status(200).end()
+        return res.status(200).json({})
     }
 
-    res.status(501).end();
+    res.status(501).json({});
 }
 
 export default errorHandler(handler);

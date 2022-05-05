@@ -9,21 +9,22 @@ async function handler(req: NextApiRequest, res: NextApiResponse<{ id: string } 
         const task = await taskService.findOne(id);
         return res.status(200).json(task);
     } else if (req.method === 'PUT') {
-        const { name, uid, description, duration, isFinished } = req.body;
+        const { name, uid, description, duration, isFinished, tags } = req.body;
         const task = await taskService.updateOne(id, {
             name,
             uid,
             description,
             duration,
-            isFinished
+            isFinished,
+            tags
         });
         return res.status(200).json({ id: task.id });
     } else if (req.method === 'DELETE') {
         await taskService.deleteOne(id);
-        return res.status(200).end();
+        return res.status(200).json({});
     }
 
-    res.status(501).end();
+    res.status(501).json({});
 }
 
 export default errorHandler(handler);
