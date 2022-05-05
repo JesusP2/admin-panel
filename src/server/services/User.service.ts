@@ -1,4 +1,4 @@
-import {authApp} from 'firebase/admin'
+import { authApp } from '../../firebase/server'
 
 class UserService {
     async findOne(uid: string) {
@@ -9,8 +9,12 @@ class UserService {
         return authApp.listUsers()
     }
 
-    async createOne(user: {email: string, password: string, displayName: string, phoneNumber: string}) {
-        return authApp.createUser(user)
+    async createOne(user: {email: string, password: string, displayName: string, phoneNumber?: string}) {
+        if (user.phoneNumber) {
+            return authApp.createUser(user)
+        }
+        const {email, password, displayName} = user
+        return authApp.createUser({email, password, displayName})
     }
 
     async updateOne(id: string, user: {email: string, password: string, displayName: string, phoneNumber: string}) {
