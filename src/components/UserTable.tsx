@@ -1,44 +1,32 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { useUser } from 'contexts/User';
 import { User } from 'types';
-import { useState } from 'react';
 
-const usersFetched: User[] = [
-    {
-        id: '1',
-        name: 'jesus',
-        email: 'jesusprzprz.e@gmail.com',
-        tasksCompleted: 3,
-        totalTasks: 10,
-        currentProject: '',
-        edit: false,
-    },
-    {
-        id: '2',
-        name: 'JESUS',
-        email: 'jesusprzprz.e@gmail.com',
-        tasksCompleted: 9,
-        totalTasks: 10,
-        currentProject: 'Secreto',
-        edit: false,
-    },
-];
 export default function UserTable() {
-    const [users, setUsers] = useState(usersFetched);
-
-    const [editableUser, setEditableUser] = useState<User>({} as User);
+    const {setEdit, edit, editableUser, setEditableUser, users, setUsers} = useUser()
     function editUser(idx: number) {
-        if (editableUser.id !== users[idx].id && editableUser.edit) return;
+        if (!users) return;
+        if (edit) return;
         const user = users[idx];
-        user.edit = !user.edit;
-        if (user.edit) {
-            setEditableUser(user);
-        }
-        setUsers((prev) => [...prev.slice(0, idx), user, ...prev.slice(idx + 1)]);
+        user.edit = true;
+        setEdit(true);
+        setEditableUser(user)
+        setUsers([...users.slice(0, idx), user, ...users.slice(idx + 1)])
+    }
+
+    function closeEdit(idx: number) {
+        if (!users) return;
+        setEdit(false)
+        setUsers([...users.slice(0, idx), {...users[idx], edit: false}, ...users.slice(idx + 1)])
+        setEditableUser(prev => ({...prev, edit: false}))
     }
 
     function saveRow(idx: number) {
-        setUsers((prev) => [...prev.slice(0, idx), { ...editableUser, edit: false }, ...prev.slice(idx + 1)]);
+        if (!users) return;
+        setEdit(false)
+        setEditableUser(prev => ({...prev, edit: false}))
+        setUsers([...users.slice(0, idx), { ...editableUser, edit: false }, ...users.slice(idx + 1)])
     }
     return (
         <div className="overflow-x-auto">
@@ -54,15 +42,15 @@ export default function UserTable() {
                     </tr>
                 </thead>
                 <tbody className="text-sm">
-                    {users.map(({ id, name, email, tasksCompleted, totalTasks, currentProject, edit }, idx) => {
+                    {users && users.map(({ uid, displayName, email, tasksCompleted, totalTasks, currentProject, edit }, idx) => {
                         if (edit) {
                             return (
-                                <tr key={id} className="hover">
+                                <tr key={uid} className="hover">
                                     <td className="w-14">
                                         <button onClick={() => saveRow(idx)}>
                                             <FontAwesomeIcon icon={faCheck} className="cursor-pointer text-green-600" />
                                         </button>
-                                        <button onClick={() => editUser(idx)} className="ml-2">
+                                        <button onClick={() => closeEdit(idx)} className="ml-2">
                                             <FontAwesomeIcon icon={faXmark} className="cursor-pointer text-red-600" />
                                         </button>
                                     </td>
@@ -70,9 +58,9 @@ export default function UserTable() {
                                         <input
                                             size={15}
                                             type="text"
-                                            value={editableUser.name}
+                                            value={editableUser.displayName}
                                             onChange={(e) =>
-                                                setEditableUser((prev) => ({ ...prev, name: e.target.value }))
+                                                setEditableUser((prev) => ({ ...prev, displayName: e.target.value }))
                                             }
                                             className="bg-inherit input h-6 rounded-none pl-0"
                                         />
@@ -132,17 +120,17 @@ export default function UserTable() {
                             );
                         }
                         return (
-                            <tr key={id} className="hover">
+                            <tr key={uid} className="hover">
                                 <td className="w-14">
                                     <button onClick={() => editUser(idx)}>
                                         <FontAwesomeIcon icon={faPenToSquare} className="cursor-pointer" />
                                     </button>
                                 </td>
-                                <td>{name}</td>
+                                <td>{displayName}</td>
                                 <td>{email}</td>
-                                <td>{tasksCompleted}</td>
-                                <td>{totalTasks}</td>
-                                <td>{currentProject}</td>
+                                <td>{tasksCompleted || 0}</td>
+                                <td>{totalTasks || 0}</td>
+                                <td>{currentProject || ""}</td>
                             </tr>
                         );
                     })}
