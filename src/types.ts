@@ -8,7 +8,7 @@ export interface CreateUser {
 export interface CreateTask {
     name: string;
     description: string;
-    uid: User[];
+    uid: string[];
     projectId: string;
     project: {
         name: string;
@@ -41,7 +41,6 @@ export interface Task extends CreateTask {
 
 export interface Project extends CreateProject {
     id: string;
-    numberOfTasks: number;
     createdAt: string;
     edit: boolean;
 }
