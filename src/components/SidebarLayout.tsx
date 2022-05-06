@@ -1,7 +1,8 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faThumbtack, faDiagramProject, faMagnifyingGlass, faHouse } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 export default function Sidebar({
     showSidebar,
     showSidebarDelay,
@@ -10,6 +11,21 @@ export default function Sidebar({
     showSidebarDelay: boolean;
 }) {
     const [tab, setTab] = useState(0);
+    const router = useRouter()
+
+    useEffect(() => {
+        const route = router.pathname.split('/')[2]
+
+        if (!route) {
+            setTab(0)
+        } else if (route === 'Users') {
+            setTab(1)
+        } else if(route === 'Tasks') {
+            setTab(2)
+        } else if (route === 'Projects') {
+            setTab(3)
+        }
+    })
     return (
         <div
             data-testid="sidebar"
