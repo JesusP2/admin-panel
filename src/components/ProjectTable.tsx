@@ -65,7 +65,7 @@ export default function ProjectTable() {
                 </thead>
                 <tbody className="text-sm">
                     {projects?.map(
-                        ({ id, name, description, uid, numberOfTasks, duration, tags, createdAt, edit }, idx) => {
+                        ({ id, name, description, uid, duration, tags, createdAt, edit }, idx) => {
                             if (edit) {
                                 return (
                                     <tr key={id} className="hover">
