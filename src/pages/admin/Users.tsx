@@ -52,8 +52,8 @@ export default function Users() {
         }
     }
     return (
-        <>
-            <div className="flex">
+        <div className="flex flex-col h-full">
+            <div className="flex px-6">
                 <h1 className="text-black text-3xl font-black mb-4 font-mono">Usuarios</h1>
                 <label className="btn modal-button btn-sm btn-square btn-success ml-8" htmlFor="my-modal-4">
                     +
@@ -111,8 +111,10 @@ export default function Users() {
                     </form>
                 </label>
             </div>
-            <UserTable />
-        </>
+            <div className="flex-1 w-full overflow-y-auto px-6">
+                <UserTable />
+            </div>
+        </div>
     );
 }
 

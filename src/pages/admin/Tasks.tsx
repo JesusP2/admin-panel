@@ -34,7 +34,6 @@ export default function Tasks() {
         data.projectId = projectId;
         data.tags = tags;
         data.uid = uids;
-        console.log(data)
         try {
             const task = await createTask(data);
             if (tasks) {
@@ -76,8 +75,8 @@ export default function Tasks() {
     }
 
     return (
-        <>
-            <div className="flex">
+        <div className="flex flex-col h-full">
+            <div className="flex px-6">
                 <h1 className="text-black text-3xl font-black mb-4 font-mono">Tareas</h1>
                 <label className="btn modal-button btn-sm btn-square btn-success ml-8" htmlFor="my-modal-4">
                     +
@@ -159,8 +158,10 @@ export default function Tasks() {
                     </form>
                 </label>
             </div>
-            <TaskTable />
-        </>
+            <div className="flex-1 w-full overflow-y-auto px-6">
+                <TaskTable />
+            </div>
+        </div>
     );
 }
 

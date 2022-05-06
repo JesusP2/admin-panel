@@ -48,112 +48,80 @@ export default function TaskTable() {
         return Math.ceil(duration / (1000 * 60 * 60 * 24)) + ' días';
     }
     return (
-        <div className="overflow-auto">
-            <table className="table table-zebra table-fixed table-compact w-full">
-                <thead>
-                    <tr>
-                        <th className="w-14"></th>
-                        <th>Nombre</th>
-                        <th className="max-w-64">Descripción</th>
-                        <th className="w-32">Usuarios</th>
-                        <th>Proyecto</th>
-                        <th>Duración</th>
-                        <th>Estado</th>
-                        <th>tags</th>
-                        <th className="w-48">Inicio</th>
-                    </tr>
-                </thead>
-                <tbody className="text-sm">
-                    {tasks?.map(
-                        ({ id, name, description, uid, project, duration, isFinished, tags, createdAt, edit }, idx) => {
-                            if (edit) {
-                                return (
-                                    <tr key={id} className="hover">
-                                        <td className="w-14">
-                                            <button onClick={() => saveRow(idx)}>
-                                                <FontAwesomeIcon
-                                                    icon={faCheck}
-                                                    className="cursor-pointer text-green-600"
-                                                />
-                                            </button>
-                                            <button onClick={() => closeEdit(idx)} className="ml-2">
-                                                <FontAwesomeIcon
-                                                    icon={faXmark}
-                                                    className="cursor-pointer text-red-600"
-                                                />
-                                            </button>
-                                        </td>
-                                        <td>
-                                            <input
-                                                size={15}
-                                                type="text"
-                                                value={editableTask.name}
-                                                onChange={(e) =>
-                                                    setEditableTask((prev) => ({ ...prev, name: e.target.value }))
-                                                }
-                                                className="bg-inherit input h-6 rounded-none pl-0"
-                                            />
-                                        </td>
-                                        <td>
-                                            <textarea
-                                                value={editableTask.description}
-                                                onChange={(e) =>
-                                                    setEditableTask((prev) => ({
-                                                        ...prev,
-                                                        description: e.target.value,
-                                                    }))
-                                                }
-                                                className="bg-inherit input h-6 rounded-none pl-0 w-32"
-                                            ></textarea>
-                                        </td>
-                                        <td>
-                                            <ul>
-                                                {uid.map((uid) => (
-                                                    <li>{users?.find((user) => user.uid === uid)?.displayName}</li>
-                                                ))}
-                                            </ul>
-                                        </td>
-                                        <td>{project.name}</td>
-                                        <td>{getDurationInDays(duration, createdAt)}</td>
-                                        <td>
-                                            <input
-                                                checked={editableTask.isFinished}
-                                                type="checkbox"
-                                                className="checkbox"
-                                                onChange={(e) => setEditableTask(prev => ({...prev, isFinished: e.target.checked}))}
-                                            />
-                                        </td>
-                                        <td>
-                                            <ul>
-                                                {tags.map((tag) => (
-                                                    <li>{tag.tag.name}</li>
-                                                ))}
-                                            </ul>
-                                        </td>
-                                        <td>{createdAt.slice(0, 10)}</td>
-                                    </tr>
-                                );
-                            }
+        <table className="table table-compact table-zebra w-full table-fixed">
+            <thead>
+                <tr className="sticky top-0">
+                    <th className="w-14 static"></th>
+                    <th className="w-32">Nombre</th>
+                    <th className="w-56">Descripción</th>
+                    <th className="w-32">Usuarios</th>
+                    <th className="w-32">Proyecto</th>
+                    <th className="w-24">Duración</th>
+                    <th className="w-24">Estado</th>
+                    <th className="w-24">tags</th>
+                    <th className="w-48">Inicio</th>
+                </tr>
+            </thead>
+            <tbody className="text-sm">
+                {tasks?.map(
+                    ({ id, name, description, uid, project, duration, isFinished, tags, createdAt, edit }, idx) => {
+                        if (edit) {
                             return (
                                 <tr key={id} className="hover">
-                                    <td className="w-14">
-                                        <button onClick={() => editTask(idx)}>
-                                            <FontAwesomeIcon icon={faPenToSquare} className="cursor-pointer" />
+                                    <td className="whitespace-normal break-words">
+                                        <button onClick={() => saveRow(idx)}>
+                                            <FontAwesomeIcon icon={faCheck} className="cursor-pointer text-green-600" />
+                                        </button>
+                                        <button onClick={() => closeEdit(idx)} className="ml-2">
+                                            <FontAwesomeIcon icon={faXmark} className="cursor-pointer text-red-600" />
                                         </button>
                                     </td>
-                                    <td>{name}</td>
-                                    <td className="whitespace-normal">{description}</td>
-                                    <td>
+                                    <td className="whitespace-normal break-words">
+                                        <input
+                                            size={15}
+                                            type="text"
+                                            value={editableTask.name}
+                                            onChange={(e) =>
+                                                setEditableTask((prev) => ({ ...prev, name: e.target.value }))
+                                            }
+                                            className="bg-inherit input h-6 rounded-none pl-0"
+                                        />
+                                    </td>
+                                    <td className="whitespace-normal break-words">
+                                        <textarea
+                                            value={editableTask.description}
+                                            onChange={(e) =>
+                                                setEditableTask((prev) => ({
+                                                    ...prev,
+                                                    description: e.target.value,
+                                                }))
+                                            }
+                                            className="bg-inherit input h-6 rounded-none pl-0 w-52"
+                                        ></textarea>
+                                    </td>
+                                    <td className="whitespace-normal break-words">
                                         <ul>
                                             {uid.map((uid) => (
                                                 <li>{users?.find((user) => user.uid === uid)?.displayName}</li>
                                             ))}
                                         </ul>
                                     </td>
-                                    <td>{project.name}</td>
-                                    <td>{getDurationInDays(duration, createdAt)}</td>
-                                    <td>{isFinished ? 'Finalizado' : 'En proceso'}</td>
-                                    <td>
+                                    <td className="whitespace-normal break-words">{project.name}</td>
+                                    <td className="whitespace-normal break-words">
+                                        {getDurationInDays(duration, createdAt)}
+                                    </td>
+                                    <td className="whitespace-normal break-words">
+                                        className="whitespace-normal break-words"{' '}
+                                        <input
+                                            checked={editableTask.isFinished}
+                                            type="checkbox"
+                                            className="checkbox"
+                                            onChange={(e) =>
+                                                setEditableTask((prev) => ({ ...prev, isFinished: e.target.checked }))
+                                            }
+                                        />
+                                    </td>
+                                    <td className="whitespace-normal break-words">
                                         <ul>
                                             {tags.map((tag) => (
                                                 <li>{tag.tag.name}</li>
@@ -163,10 +131,43 @@ export default function TaskTable() {
                                     <td>{createdAt.slice(0, 10)}</td>
                                 </tr>
                             );
-                        },
-                    )}
-                </tbody>
-            </table>
-        </div>
+                        }
+                        return (
+                            <tr key={id} className="hover">
+                                <td className="whitespace-normal break-words">
+                                    <button onClick={() => editTask(idx)}>
+                                        <FontAwesomeIcon icon={faPenToSquare} className="cursor-pointer" />
+                                    </button>
+                                </td>
+                                <td className="whitespace-normal break-words">{name}</td>
+                                <td className="whitespace-normal break-words">{description}</td>
+                                <td className="whitespace-normal break-words">
+                                    <ul>
+                                        {uid.map((uid) => (
+                                            <li>{users?.find((user) => user.uid === uid)?.displayName}</li>
+                                        ))}
+                                    </ul>
+                                </td>
+                                <td className="whitespace-normal break-words">{project.name}</td>
+                                <td className="whitespace-normal break-words">
+                                    {getDurationInDays(duration, createdAt)}
+                                </td>
+                                <td className="whitespace-normal break-words">
+                                    {isFinished ? 'Finalizado' : 'En proceso'}
+                                </td>
+                                <td className="whitespace-normal break-words">
+                                    <ul>
+                                        {tags.map((tag) => (
+                                            <li>{tag.tag.name}</li>
+                                        ))}
+                                    </ul>
+                                </td>
+                                <td>{createdAt.slice(0, 10)}</td>
+                            </tr>
+                        );
+                    },
+                )}
+            </tbody>
+        </table>
     );
 }

@@ -67,8 +67,8 @@ export default function Projects() {
     }
 
     return (
-        <>
-            <div className="flex">
+        <div className="flex flex-col h-full">
+            <div className="flex px-6">
                 <h1 className="text-black text-3xl font-black mb-4 font-mono">Proyectos</h1>
                 <label className="btn modal-button btn-sm btn-square btn-success ml-8" htmlFor="my-modal-4">
                     +
@@ -81,7 +81,6 @@ export default function Projects() {
                     <FontAwesomeIcon icon={faTrashCan} />
                 </button>
             </div>
-
             <input type="checkbox" id="my-modal-4" className="modal-toggle" />
             <div className="modal">
                 <label className="modal-box relative w-80">
@@ -141,10 +140,13 @@ export default function Projects() {
                     </form>
                 </label>
             </div>
-            <ProjectTable />
-        </>
+            <div className="flex-1 w-full overflow-y-auto px-6">
+                <ProjectTable />
+            </div>
+        </div>
     );
 }
+
 
 Projects.getLayout = function getLayout(page: ReactElement) {
     return <AdminLayout>{page}</AdminLayout>;
