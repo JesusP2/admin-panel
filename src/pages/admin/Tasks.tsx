@@ -4,22 +4,38 @@ import AdminLayout from 'components/AdminLayout';
 import TaskTable from 'components/TaskTable';
 import { useTask } from 'contexts/Task';
 import { useUser } from 'contexts/User';
-import { ReactElement, useRef } from 'react';
+import { ReactElement, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
-import { Task } from 'types';
+import { Tags, Task } from 'types';
+import Select from 'react-select';
+import { useProject } from 'contexts/Project';
 
 export default function Tasks() {
-    const { edit, setEdit, setTasks, createTask, tasks, deleteTask, editableTask, setEditableTask } =
-        useTask();
+    const { edit, setEdit, setTasks, createTask, tasks, deleteTask, editableTask, setEditableTask } = useTask();
     const { users } = useUser();
+    const { projects } = useProject();
     const { register, resetField, handleSubmit } = useForm();
     const closeModal = useRef<HTMLLabelElement | null>(null);
+    const [inputSelector, setInputSelector] = useState(0);
+    const [uids, setUids] = useState<string[]>([]);
+    const [projectId, setProjectId] = useState('');
+    const [tags, setTags] = useState<string[]>([]);
 
     async function onSubmit(data: any) {
+        if (0 > new Date(data.duration).getTime() - new Date().getTime()) {
+            return toast.error('Fecha invalida');
+        } else if (!projectId) {
+            return toast.error('Debes seleccionar un proyecto');
+        } else if (!uids.length) {
+            return toast.error('Debes seleccionar al menos 1 usuario');
+        }
+        data.duration = new Date(data.duration).toISOString();
+        data.projectId = projectId;
+        data.tags = tags;
+        data.uid = uids;
+        console.log(data)
         try {
-            data.duration = new Date(data.duration).toISOString()
-            data.projectId = "ceb079fb-2798-4732-ba81-bfa69f8b4140"
             const task = await createTask(data);
             if (tasks) {
                 setTasks((prev) => [...prev!, { ...task, edit: false }]);
@@ -39,10 +55,10 @@ export default function Tasks() {
     function resetForm() {
         resetField('name');
         resetField('description');
-        resetField('uid');
-        resetField('projectId');
         resetField('duration');
-        resetField('tags');
+        setUids([]);
+        setProjectId('');
+        setTags([]);
     }
 
     async function deleteOneTask() {
@@ -84,46 +100,49 @@ export default function Tasks() {
                             {...register('name', { required: true })}
                             className="input input-sm rounded-sm my-2"
                             placeholder="Nombre"
+                            disabled={inputSelector !== 0}
                         />
                         <textarea
                             {...register('description', { required: true })}
                             className="input input-sm rounded-sm my-2"
                             placeholder="Escribe algo..."
+                            disabled={inputSelector !== 0}
                         />
-                        {/* TODO: Add fetched projects */}
-                        <select className="select w-full max-w-xs" {...register('projectId')}>
-                            <option disabled selected>
-                                Proyecto
-                            </option>
-                            {users?.map((user) => (
-                                <option key={user.uid} value={user.uid}>{user.displayName}</option>
-                            ))}
-                        </select>
-                        <select className="select w-full max-w-xs" {...register('uid')} multiple>
-                            <option disabled selected>
-                                Usuarios
-                            </option>
-                            {users?.map((user) => (
-                                <option key={ user.uid } value={user.uid}>{user.displayName}</option>
-                            ))}
-                        </select>
+                        {users && (
+                            <Select
+                                onChange={(e) => setUids(e.map(({ value }) => value))}
+                                onFocus={() => setInputSelector(1)}
+                                onMenuClose={() => setInputSelector(0)}
+                                isDisabled={inputSelector === 2 || inputSelector === 3}
+                                isMulti={true}
+                                options={users.map((user) => ({ value: user.uid, label: user.displayName }))}
+                                className="my-4"
+                            />
+                        )}
+                        {projects && (
+                            <Select
+                                onChange={(e) => setProjectId(e?.value || '')}
+                                onFocus={() => setInputSelector(2)}
+                                onMenuClose={() => setInputSelector(0)}
+                                isDisabled={inputSelector === 1 || inputSelector == 3}
+                                options={projects.map((project) => ({ value: project.id, label: project.name }))}
+                            />
+                        )}
+                        <Select
+                            onChange={(e) => setTags(e.map(({ value }) => value))}
+                            isMulti={true}
+                            onFocus={() => setInputSelector(3)}
+                            onBlur={() => setInputSelector(0)}
+                            isDisabled={inputSelector === 1 || inputSelector == 2}
+                            options={Object.entries(Tags).map(([k, v]) => ({ value: k, label: v }))}
+                            className="my-4"
+                        />
                         <input
                             type="date"
                             {...register('duration', { required: true })}
                             className="input input-sm rounded-sm my-2"
                             placeholder="duración"
                         />
-                        {/* TODO: Add fetched tags  */}
-                        <select className="select w-full max-w-xs" {...register('tags')} multiple>
-                            <option disabled selected>
-                                Tags
-                            </option>
-                            <option>Homer</option>
-                            <option>Marge</option>
-                            <option>Bart</option>
-                            <option>Lisa</option>
-                            <option>Maggie</option>
-                        </select>
                         <div className="modal-action flex justify-between">
                             <button type="submit" className="btn btn-success">
                                 CREAR
@@ -147,4 +166,4 @@ export default function Tasks() {
 
 Tasks.getLayout = function getLayout(page: ReactElement) {
     return <AdminLayout>{page}</AdminLayout>;
-}
+};
