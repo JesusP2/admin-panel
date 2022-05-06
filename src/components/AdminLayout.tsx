@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import Sidebar from './SidebarLayout';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-    const [showSidebar, setShowSidebar] = useState(true);
+    //TODO: Set useState to true
+    const [showSidebar, setShowSidebar] = useState(false);
     const [showSidebarDelay, setShowSidebarDelay] = useState(true);
     useEffect(() => {
         if (!showSidebar) {
@@ -26,7 +27,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     </div>
                 </nav>
                 <div className="mx-auto w-full py-10 px-6 bg-zinc-200 flex-1">
-                    <main className="w-full h-full rounded border-dashed border-2 max-w-6xl mx-auto min-w-[20rem]">{children}</main>
+                    <main className="h-full w-full max-w-6xl rounded border-dashed border-2">{children}</main>
                 </div>
             </div>
         </div>
