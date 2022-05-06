@@ -20,7 +20,7 @@ export interface CreateTask {
 export interface CreateProject {
     name: string;
     description: string;
-    uid: User[];
+    uid: string[];
     duration: string;
     tags: { taskId: string; tagId: string; tag: { id: string; name: string } }[];
 }
@@ -44,4 +44,18 @@ export interface Project extends CreateProject {
     numberOfTasks: number;
     createdAt: string;
     edit: boolean;
+}
+
+export enum Tags {
+    frontend = 'frontend',
+    backend = 'backend',
+    fullStack = 'full stack',
+    desktop = 'desktop',
+    web = 'web',
+    database = 'database',
+    mobile = 'mobile',
+    cloud = 'cloud',
+    ML = 'ML',
+    CI_CD = 'CI/CD',
+    software = 'software'
 }
