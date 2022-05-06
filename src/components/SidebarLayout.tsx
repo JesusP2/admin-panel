@@ -15,7 +15,7 @@ export default function Sidebar({
             data-testid="sidebar"
             className={`bg-gray-800 shadow-xl overflow-hidden flex flex-none flex-col justify-between h-full ${
                 showSidebar ? 'w-64' : 'w-16'
-            } relative duration-300`}
+            } absolute top-0 left-0 duration-300`}
         >
             <div className={`h-full ${showSidebarDelay ? 'hidden' : ''}`}>
                 <div className="h-16 w-full flex items-center justify-center" data-testid="sidebar-icon">
