@@ -1,3 +1,19 @@
+# ADMIN PANEL
+
+- Dirigirse a la ruta admin/signin para iniciar sesión
+
+## Hay 2 cuentas principales:
+### Admin:
+
+**correo:** jesusprzprz.e@gmail.com
+**pass:** contra12345
+
+## No admin:
+
+**correo:** jesus_perez99@hotmail.com
+**pass:** contra12345
+
+
 # TODOS:
 - [x] Cambiar duration por fecha de terminacion cuando se crea un proyecto o tarea
 - [x] Si la fecha ya ocurrio, mostrar notificacion que no se puede
