@@ -1,11 +1,14 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { useUser } from 'contexts/User';
-import { User } from 'types';
 import { toast } from 'react-toastify';
+import { useTask } from 'contexts/Task';
+import { useProject } from 'contexts/Project';
 
 export default function UserTable() {
     const { setEdit, edit, editableUser, setEditableUser, users, setUsers, updateUser } = useUser();
+    const { tasks } = useTask();
+    const { projects } = useProject();
     function editUser(idx: number) {
         if (!users) return;
         if (edit) return;
@@ -49,12 +52,12 @@ export default function UserTable() {
                     <th className="w-56">Correo</th>
                     <th className="w-16">Rol</th>
                     <th className="w-32">Tareas completadas</th>
-                    <th className="w-32">Proyecto</th>
+                    <th className="w-32">Proyectos</th>
                 </tr>
             </thead>
             <tbody className="text-sm">
                 {users &&
-                    users.map(({ uid, displayName, email, tasksCompleted, currentProject, edit }, idx) => {
+                    users.map(({ uid, displayName, customClaims, email, edit }, idx) => {
                         if (edit) {
                             return (
                                 <tr key={uid} className="hover">
@@ -91,9 +94,23 @@ export default function UserTable() {
                                             className="bg-inherit input h-6 rounded-none pl-0"
                                         />
                                     </td>
-                                    <td>{'Viewer'}</td>
-                                    <td className="whitespace-normal break-words">{tasksCompleted}</td>
-                                    <td className="whitespace-normal break-words">{currentProject || 'Libre'}</td>
+                                    <td className="whitespace-normal break-words">{customClaims?.admin ? 'Admin' : 'Trabajador'}</td>
+                                    <td className="whitespace-normal break-words">
+                                        {
+                                            tasks
+                                                ?.map((task) => task.isFinished && task.uid.some((el) => el === uid))
+                                                .filter((el) => el).length
+                                        }
+                                    </td>
+                                    <td className="whitespace-normal break-words">
+                                        <ul>
+                                            {projects?.map((project) => {
+                                                if (project.uid.some((el) => el === uid)) {
+                                                    return <li key={project.id}>{project.name}</li>;
+                                                }
+                                            })}
+                                        </ul>
+                                    </td>
                                 </tr>
                             );
                         }
@@ -106,9 +123,23 @@ export default function UserTable() {
                                 </td>
                                 <td className="whitespace-normal break-words">{displayName}</td>
                                 <td className="whitespace-normal break-words">{email}</td>
-                                <td className="whitespace-normal break-words">{'Admin'}</td>
-                                <td className="whitespace-normal break-words">{tasksCompleted}</td>
-                                <td className="whitespace-normal break-words">{currentProject || 'Libre'}</td>
+                                <td className="whitespace-normal break-words">{customClaims?.admin ? 'Admin' : 'Trabajador'}</td>
+                                <td className="whitespace-normal break-words">
+                                    {
+                                        tasks
+                                            ?.map((task) => task.isFinished && task.uid.some((el) => el === uid))
+                                            .filter((el) => el).length
+                                    }
+                                </td>
+                                <td className="whitespace-normal break-words">
+                                    <ul>
+                                        {projects?.map((project) => {
+                                            if (project.uid.some((el) => el === uid)) {
+                                                return <li key={project.id}>{project.name}</li>;
+                                            }
+                                        })}
+                                    </ul>
+                                </td>
                             </tr>
                         );
                     })}
