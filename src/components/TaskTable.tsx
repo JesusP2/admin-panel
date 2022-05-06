@@ -4,9 +4,11 @@ import { Task } from 'types';
 import { useState } from 'react';
 import { useTask } from 'contexts/Task';
 import { toast } from 'react-toastify';
+import { useUser } from 'contexts/User';
 
 export default function TaskTable() {
     const { setEdit, edit, editableTask, setEditableTask, tasks, setTasks, updateTask } = useTask();
+    const { users } = useUser();
     function editTask(idx: number) {
         if (!tasks) return;
         if (edit) return;
@@ -93,10 +95,22 @@ export default function TaskTable() {
                                             className="bg-inherit input h-6 rounded-none pl-0"
                                         ></textarea>
                                     </td>
-                                    <td>{uid.length}</td>
+                                    <td>
+                                        <ul>
+                                            {uid.map((uid) => (
+                                                <li>{users?.find((user) => user.uid === uid)?.displayName}</li>
+                                            ))}
+                                        </ul>
+                                    </td>
                                     <td>{project.name}</td>
                                     <td>{getDurationInDays(duration, createdAt)}</td>
-                                    <td>{tags.length}</td>
+                                    <td>
+                                        <ul>
+                                            {tags.map((tag) => (
+                                                <li>{tag.tag.name}</li>
+                                            ))}
+                                        </ul>
+                                    </td>
                                     <td>{createdAt.slice(0, 10)}</td>
                                 </tr>
                             );
@@ -110,7 +124,13 @@ export default function TaskTable() {
                                 </td>
                                 <td>{name}</td>
                                 <td className="whitespace-normal">{description}</td>
-                                <td>{uid.length}</td>
+                                <td>
+                                    <ul>
+                                        {uid.map((uid) => (
+                                            <li>{users?.find((user) => user.uid === uid)?.displayName}</li>
+                                        ))}
+                                    </ul>
+                                </td>
                                 <td>{project.name}</td>
                                 <td>{getDurationInDays(duration, createdAt)}</td>
                                 <td>
