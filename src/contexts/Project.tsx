@@ -1,5 +1,8 @@
+import { useRouter } from 'next/router';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import type { CreateProject, Project } from 'types';
+import { useAuth } from './Auth';
 
 interface IContext {
     projects: null | Project[];
@@ -26,9 +29,32 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     const [projects, setProjects] = useState<null | Project[]>([]);
     const [edit, setEdit] = useState(false);
     const [editableProject, setEditableProject] = useState<Project>({} as Project);
+    const { currentUser } = useAuth();
+    const router = useRouter();
 
-    async function fetchWrapper(fn: () => Promise<any>) {
-        const res = await fn();
+    async function fetchWrapper(url: string, options?: RequestInit) {
+        if (!currentUser) {
+            toast.error('Por favor inicia sesion');
+            return;
+        }
+        const token = await currentUser.getIdToken();
+        if (options) {
+            options = { ...options };
+            options.headers = {
+                ...options.headers,
+                Authorization: `Bearer ${token}`,
+            };
+
+            const res = await fetch(url, options);
+
+            if (!res.ok) {
+                throw new Error((await res.json()).error);
+            }
+
+            return res.json();
+        }
+
+        const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
         if (!res.ok) {
             throw new Error((await res.json()).error);
         }
@@ -36,53 +62,32 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     }
 
     async function findAllProjects() {
-        const fn = async () => fetch(`${url}/api/project`);
-        return fetchWrapper(fn);
+        return fetchWrapper(`${url}/api/project`);
     }
 
     async function findProjectById(id: string) {
-        const fn = async () => fetch(`${url}/api/project/${id}`);
-        return fetchWrapper(fn);
+        return fetchWrapper(`${url}/api/project/${id}`);
     }
 
     async function createProject(project: CreateProject) {
-        const fn = async () =>
-            fetch(`${url}/api/project`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(project),
-            });
-        return fetchWrapper(fn);
+        return fetchWrapper(`${url}/api/project`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(project),
+        });
     }
 
     async function updateProject(id: string, project: Partial<CreateProject>) {
-        const fn = async () =>
-            fetch(`${url}/api/project/${id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(project),
-            });
-        return fetchWrapper(fn);
+        return fetchWrapper(`${url}/api/project/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(project),
+        });
     }
 
     async function deleteProject(id: string) {
-        const fn = async () => fetch(`${url}/api/project/${id}`, { method: 'DELETE' });
-        return fetchWrapper(fn);
+        return fetchWrapper(`${url}/api/project/${id}`, { method: 'DELETE' });
     }
-
-
-    useEffect(() => {
-        findAllProjects()
-            .then((res) => {
-                const projects = res?.map((project: any) => ({
-                    ...project,
-                    edit: false,
-                }));
-                console.log(projects)
-                setProjects(projects || []);
-            })
-            .catch((err) => console.log(err));
-    }, []);
 
     const value: IContext = {
         projects,

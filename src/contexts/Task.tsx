@@ -1,5 +1,8 @@
+import { useRouter } from 'next/router';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import type { CreateTask, Task } from 'types';
+import { useAuth } from './Auth';
 
 interface IContext {
     tasks: null | Task[];
@@ -10,8 +13,6 @@ interface IContext {
     setEditableTask: React.Dispatch<React.SetStateAction<Task>>;
     findAllTasks: () => Promise<any>;
     findTaskById: (id: string) => Promise<any>;
-    findTasksByUserId: (uid: string) => Promise<any>;
-    findTasksByProjectId: (projectId: string) => Promise<any>;
     createTask: (task: Omit<Task, 'id' | 'createdAt' | 'edit'>) => Promise<any>;
     updateTask: (id: string, task: Partial<Omit<Task, 'id' | 'createdAt' | 'edit'>>) => Promise<any>;
     deleteTask: (id: string) => Promise<any>;
@@ -28,9 +29,30 @@ export function TaskProvider({ children }: { children: ReactNode }) {
     const [tasks, setTasks] = useState<null | Task[]>([]);
     const [edit, setEdit] = useState(false);
     const [editableTask, setEditableTask] = useState<Task>({} as Task);
+    const { currentUser } = useAuth();
 
-    async function fetchWrapper(fn: () => Promise<any>) {
-        const res = await fn();
+    async function fetchWrapper(url: string, options?: RequestInit) {
+        if (!currentUser) {
+            throw new Error("Por favori inicia sesión")
+        }
+        const token = await currentUser.getIdToken();
+        if (options) {
+            options = { ...options };
+            options.headers = {
+                ...options.headers,
+                Authorization: `Bearer ${token}`,
+            };
+
+            const res = await fetch(url, options);
+
+            if (!res.ok) {
+                throw new Error((await res.json()).error);
+            }
+
+            return res.json();
+        }
+
+        const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
         if (!res.ok) {
             throw new Error((await res.json()).error);
         }
@@ -38,65 +60,32 @@ export function TaskProvider({ children }: { children: ReactNode }) {
     }
 
     async function findAllTasks() {
-        const fn = async () => fetch(`${url}/api/task`);
-        return fetchWrapper(fn);
+        return fetchWrapper(`${url}/api/task`);
     }
 
     async function findTaskById(id: string) {
-        const fn = async () => fetch(`${url}/api/task/${id}`);
-        return fetchWrapper(fn);
-    }
-
-    async function findTasksByUserId(uid: string) {
-        //TODO: Implement endpoint
-        const fn = async () => fetch(`${url}/api/user/${uid}/task`);
-        return fetchWrapper(fn);
-    }
-
-    async function findTasksByProjectId(projectId: string) {
-        //TODO: Implement endpoint
-        const fn = async () => fetch(`${url}/api/project/${projectId}/task`);
-        return fetchWrapper(fn);
+        return fetchWrapper(`${url}/api/task/${id}`);
     }
 
     async function createTask(task: CreateTask) {
-        const fn = async () =>
-            fetch(`${url}/api/task`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(task),
-            });
-        return fetchWrapper(fn);
+        return fetchWrapper(`${url}/api/task`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(task),
+        });
     }
 
     async function updateTask(id: string, task: Partial<CreateTask>) {
-        const fn = async () =>
-            fetch(`${url}/api/task/${id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(task),
-            });
-        return fetchWrapper(fn);
+        return fetchWrapper(`${url}/api/task/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(task),
+        });
     }
 
     async function deleteTask(id: string) {
-        const fn = async () => fetch(`${url}/api/task/${id}`, { method: 'DELETE' });
-        return fetchWrapper(fn);
+        return fetchWrapper(`${url}/api/task/${id}`, { method: 'DELETE' });
     }
-
-
-    useEffect(() => {
-        findAllTasks()
-            .then((res) => {
-                const tasks = res?.map((task: any) => ({
-                    ...task,
-                    edit: false,
-                }));
-                console.log(tasks)
-                setTasks(tasks || []);
-            })
-            .catch((err) => console.log(err));
-    }, []);
 
     const value: IContext = {
         tasks,
@@ -108,8 +97,6 @@ export function TaskProvider({ children }: { children: ReactNode }) {
         findAllTasks,
         findTaskById,
         createTask,
-        findTasksByProjectId,
-        findTasksByUserId,
         updateTask,
         deleteTask,
     };

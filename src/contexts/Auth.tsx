@@ -9,6 +9,7 @@ import { auth } from '../firebase';
 
 interface IContext {
     getUser: () => Promise<null | User>;
+    currentUser: User | null;
     isAdmin: () => Promise<boolean | undefined>;
     signIn: (email: string, password: string) => Promise<UserCredential>;
     logOut: () => Promise<void>;
@@ -67,6 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const value: IContext = {
         getUser,
+        currentUser,
         isAdmin,
         signIn,
         logOut,
