@@ -4,7 +4,6 @@ import { useProject } from 'contexts/Project';
 import { toast } from 'react-toastify';
 import { useUser } from 'contexts/User';
 import { useTask } from 'contexts/Task';
-import user from 'pages/api/user';
 
 export default function ProjectTable() {
     const { setEdit, edit, editableProject, setEditableProject, projects, setProjects, updateProject } = useProject();
@@ -30,8 +29,8 @@ export default function ProjectTable() {
     async function saveRow(idx: number) {
         if (!projects) return;
         try {
-            const { name, description, duration, id } = editableProject;
-            await updateProject(id, { name, description, duration });
+            const { name, description, duration, isFinished, id } = editableProject;
+            await updateProject(id, { name, description, duration, isFinished });
             toast.success('Proyecto actualizado');
         } catch (err: unknown) {
             if (err instanceof Error) {
@@ -102,7 +101,7 @@ export default function ProjectTable() {
                                 <td className="whitespace-normal break-words">
                                     <ul>
                                         {uid.map((uid) => (
-                                            <li>{users?.find((user) => user.uid === uid)?.displayName}</li>
+                                            <li key={uid}>{users?.find((user) => user.uid === uid)?.displayName}</li>
                                         ))}
                                     </ul>
                                 </td>
@@ -121,7 +120,7 @@ export default function ProjectTable() {
                                 <td className="whitespace-normal break-words">
                                     <ul>
                                         {tags.map((tag) => (
-                                            <li>{tag.tag.name}</li>
+                                            <li key={tag.tagId}>{tag.tag.name}</li>
                                         ))}
                                     </ul>
                                 </td>
@@ -141,7 +140,7 @@ export default function ProjectTable() {
                             <td className="whitespace-normal break-words">
                                 <ul>
                                     {uid.map((uid) => (
-                                        <li>{users?.find((user) => user.uid === uid)?.displayName}</li>
+                                        <li key={uid}>{users?.find((user) => user.uid === uid)?.displayName}</li>
                                     ))}
                                 </ul>
                             </td>
@@ -151,7 +150,7 @@ export default function ProjectTable() {
                             <td className="whitespace-normal break-words">
                                 <ul>
                                     {tags.map((tag) => (
-                                        <li>{tag.tag.name}</li>
+                                        <li key={tag.tagId}>{tag.tag.name}</li>
                                     ))}
                                 </ul>
                             </td>

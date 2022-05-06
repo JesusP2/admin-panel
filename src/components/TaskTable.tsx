@@ -1,7 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
-import { Task } from 'types';
-import { useState } from 'react';
 import { useTask } from 'contexts/Task';
 import { toast } from 'react-toastify';
 import { useUser } from 'contexts/User';
@@ -29,9 +27,9 @@ export default function TaskTable() {
     async function saveRow(idx: number) {
         if (!tasks) return;
         try {
-            const { name, description, duration, id } = editableTask;
-            await updateTask(id, { name, description, duration });
-            toast.success('Usuario actualizado');
+            const { name, description, duration, isFinished, id } = editableTask;
+            await updateTask(id, { name, description, duration, isFinished });
+            toast.success('Tarea actualizado');
         } catch (err: unknown) {
             if (err instanceof Error) {
                 toast.error(err.message);
@@ -102,7 +100,7 @@ export default function TaskTable() {
                                     <td className="whitespace-normal break-words">
                                         <ul>
                                             {uid.map((uid) => (
-                                                <li>{users?.find((user) => user.uid === uid)?.displayName}</li>
+                                                <li key={uid}>{users?.find((user) => user.uid === uid)?.displayName}</li>
                                             ))}
                                         </ul>
                                     </td>
@@ -111,7 +109,6 @@ export default function TaskTable() {
                                         {getDurationInDays(duration, createdAt)}
                                     </td>
                                     <td className="whitespace-normal break-words">
-                                        className="whitespace-normal break-words"{' '}
                                         <input
                                             checked={editableTask.isFinished}
                                             type="checkbox"
@@ -124,7 +121,7 @@ export default function TaskTable() {
                                     <td className="whitespace-normal break-words">
                                         <ul>
                                             {tags.map((tag) => (
-                                                <li>{tag.tag.name}</li>
+                                                <li key={tag.tagId}>{tag.tag.name}</li>
                                             ))}
                                         </ul>
                                     </td>
@@ -144,7 +141,7 @@ export default function TaskTable() {
                                 <td className="whitespace-normal break-words">
                                     <ul>
                                         {uid.map((uid) => (
-                                            <li>{users?.find((user) => user.uid === uid)?.displayName}</li>
+                                            <li key={uid}>{users?.find((user) => user.uid === uid)?.displayName}</li>
                                         ))}
                                     </ul>
                                 </td>
@@ -158,7 +155,7 @@ export default function TaskTable() {
                                 <td className="whitespace-normal break-words">
                                     <ul>
                                         {tags.map((tag) => (
-                                            <li>{tag.tag.name}</li>
+                                            <li key={tag.tagId}>{tag.tag.name}</li>
                                         ))}
                                     </ul>
                                 </td>
