@@ -48,15 +48,15 @@ export default function UserTable() {
                         <th className="w-14 "></th>
                         <th>Nombre</th>
                         <th>Correo</th>
-                        <th># tareas completadas</th>
-                        <th>Tareas totales</th>
-                        <th>Proyecto actual</th>
+                        <th>Rol</th>
+                        <th>Tareas completadas</th>
+                        <th>Proyecto</th>
                     </tr>
                 </thead>
                 <tbody className="text-sm">
                     {users &&
                         users.map(
-                            ({ uid, displayName, email, tasksCompleted, totalTasks, currentProject, edit }, idx) => {
+                            ({ uid, displayName, email, tasksCompleted, currentProject, edit }, idx) => {
                                 if (edit) {
                                     return (
                                         <tr key={uid} className="hover">
@@ -99,8 +99,8 @@ export default function UserTable() {
                                                     className="bg-inherit input h-6 rounded-none pl-0"
                                                 />
                                             </td>
+                                                <td>{"Viewer"}</td>
                                             <td>{tasksCompleted}</td>
-                                            <td>{totalTasks}</td>
                                             <td>{currentProject || "Libre"}</td>
                                         </tr>
                                     );
@@ -114,8 +114,8 @@ export default function UserTable() {
                                         </td>
                                         <td>{displayName}</td>
                                         <td>{email}</td>
+                                        <td>{"Admin"}</td>
                                         <td>{tasksCompleted}</td>
-                                        <td>{totalTasks}</td>
                                         <td>{currentProject || "Libre"}</td>
                                     </tr>
                                 );

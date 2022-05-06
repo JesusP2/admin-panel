@@ -103,7 +103,7 @@ export default function ProjectTable() {
                                                         description: e.target.value,
                                                     }))
                                                 }
-                                                className="bg-inherit input h-6 rounded-none pl-0"
+                                                className="bg-inherit input h-6 rounded-none pl-0 w-32"
                                             ></textarea>
                                         </td>
                                         <td>

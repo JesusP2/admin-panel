@@ -28,7 +28,6 @@ export interface CreateProject {
 export interface User extends CreateUser {
     uid: string;
     tasksCompleted: number;
-    totalTasks: number;
     currentProject: string;
     edit: boolean;
 }

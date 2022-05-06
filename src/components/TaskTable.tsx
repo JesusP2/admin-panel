@@ -55,11 +55,11 @@ export default function TaskTable() {
                         <th className="w-14"></th>
                         <th>Nombre</th>
                         <th className="max-w-64">Descripción</th>
-                        <th className="w-32"># de usuarios</th>
+                        <th className="w-32">Usuarios</th>
                         <th>Proyecto</th>
                         <th>Duración</th>
                         <th>tags</th>
-                        <th className="w-48">fecha de creación</th>
+                        <th className="w-48">Inicio</th>
                     </tr>
                 </thead>
                 <tbody className="text-sm">
@@ -92,7 +92,7 @@ export default function TaskTable() {
                                             onChange={(e) =>
                                                 setEditableTask((prev) => ({ ...prev, description: e.target.value }))
                                             }
-                                            className="bg-inherit input h-6 rounded-none pl-0"
+                                            className="bg-inherit input h-6 rounded-none pl-0 w-32"
                                         ></textarea>
                                     </td>
                                     <td>
