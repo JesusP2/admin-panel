@@ -33,7 +33,7 @@ export default function Projects() {
                 setProjects((prev) => [...prev!, { ...project, edit: false }]);
             }
             resetForm();
-            toast.success('Tarea creada');
+            toast.success('Proyecto creado');
             if (closeModal.current) {
                 closeModal.current.click();
             }
@@ -58,7 +58,7 @@ export default function Projects() {
             setEdit(false);
             setProjects((prev) => prev!.filter(({ id }) => id !== editableProject.id));
             setEditableProject({} as Project);
-            toast.success('Tarea eliminada');
+            toast.success('Proyecto eliminado');
         } catch (err: unknown) {
             if (err instanceof Error) {
                 toast.error(err.message);

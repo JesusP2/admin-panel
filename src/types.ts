@@ -34,12 +34,16 @@ export interface User extends CreateUser {
 
 export interface Task extends CreateTask {
     id: string;
+    isFinished: boolean;
+    updatedAt: string;
     createdAt: string;
     edit: boolean;
 }
 
 export interface Project extends CreateProject {
     id: string;
+    isFinished: boolean;
+    updatedAt: string;
     createdAt: string;
     edit: boolean;
 }

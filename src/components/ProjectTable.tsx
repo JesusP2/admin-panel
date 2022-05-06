@@ -32,7 +32,7 @@ export default function ProjectTable() {
         try {
             const { name, description, duration, id } = editableProject;
             await updateProject(id, { name, description, duration });
-            toast.success('Usuario actualizado');
+            toast.success('Proyecto actualizado');
         } catch (err: unknown) {
             if (err instanceof Error) {
                 toast.error(err.message);
@@ -59,13 +59,14 @@ export default function ProjectTable() {
                         <th className="w-32">Usuarios</th>
                         <th># de tareas</th>
                         <th>Duración</th>
+                        <th>Estado</th>
                         <th>tags</th>
                         <th className="w-48">Inicio</th>
                     </tr>
                 </thead>
                 <tbody className="text-sm">
                     {projects?.map(
-                        ({ id, name, description, uid, duration, tags, createdAt, edit }, idx) => {
+                        ({ id, name, description, uid, duration, isFinished, tags, createdAt, edit }, idx) => {
                             if (edit) {
                                 return (
                                     <tr key={id} className="hover">
@@ -116,6 +117,14 @@ export default function ProjectTable() {
                                         <td>{tasks?.filter(({ projectId }) => projectId === id).length || '0'}</td>
                                         <td>{getDurationInDays(duration, createdAt)}</td>
                                         <td>
+                                            <input
+                                                checked={editableProject.isFinished}
+                                                type="checkbox"
+                                                className="checkbox"
+                                                onChange={(e) => setEditableProject(prev => ({...prev, isFinished: e.target.checked}))}
+                                            />
+                                        </td>
+                                        <td>
                                             <ul>
                                                 {tags.map((tag) => (
                                                     <li>{tag.tag.name}</li>
@@ -144,6 +153,7 @@ export default function ProjectTable() {
                                     </td>
                                     <td>{tasks?.filter(({ projectId }) => projectId === id).length || '0'}</td>
                                     <td>{getDurationInDays(duration, createdAt)}</td>
+                                    <td>{isFinished ? 'Finalizado' : 'En proceso'}</td>
                                     <td>
                                         <ul>
                                             {tags.map((tag) => (
