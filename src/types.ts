@@ -14,7 +14,7 @@ export interface CreateTask {
         name: string;
     }
     duration: string;
-    tags: { taskId: string; tagId: string; tag: { id: string; name: string } }[];
+    tags: { tagId: string; tag: { id: string; name: string } }[];
 }
 
 export interface CreateProject {
@@ -22,13 +22,14 @@ export interface CreateProject {
     description: string;
     uid: string[];
     duration: string;
-    tags: { taskId: string; tagId: string; tag: { id: string; name: string } }[];
+    tags: { tagId: string; tag: { id: string; name: string } }[];
 }
 
 export interface User extends CreateUser {
     uid: string;
-    tasksCompleted: number;
-    currentProject: string;
+    customClaims: {
+        admin: boolean
+    }
     edit: boolean;
 }
 
