@@ -1,48 +1,52 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
-import { Project } from 'types';
-import { useState } from 'react';
+import { useProject } from 'contexts/Project';
+import { toast } from 'react-toastify';
+import { useUser } from 'contexts/User';
+import { useTask } from 'contexts/Task';
+import user from 'pages/api/user';
 
-const projectsFetched: Project[] = [
-    {
-        id: '1',
-        name: 'projecto 1',
-        description: 'description proyecto 1',
-        users: [],
-        numberOfTasks: 33,
-        duration: '23 days',
-        tags: ['project', 'software'],
-        createdAt: 'hoy',
-        edit: false,
-    },
-    {
-        id: '2',
-        name: 'projecto 2',
-        description: 'description proyecto 2',
-        users: [],
-        numberOfTasks: 33,
-        duration: '23 days',
-        tags: ['project', 'software'],
-        createdAt: 'hoy',
-        edit: false,
-    },
-];
 export default function ProjectTable() {
-    const [projects, setProjects] = useState(projectsFetched);
-
-    const [editableProject, setEditableProject] = useState<Project>({} as Project);
+    const { setEdit, edit, editableProject, setEditableProject, projects, setProjects, updateProject } = useProject();
+    const { users } = useUser();
+    const { tasks } = useTask();
     function editProject(idx: number) {
-        if (editableProject.id !== projects[idx].id && editableProject.edit) return;
+        if (!projects) return;
+        if (edit) return;
         const project = projects[idx];
-        project.edit = !project.edit;
-        if (project.edit) {
-            setEditableProject(project);
-        }
-        setProjects((prev) => [...prev.slice(0, idx), project, ...prev.slice(idx + 1)]);
+        project.edit = true;
+        setEdit(true);
+        setEditableProject(project);
+        setProjects([...projects.slice(0, idx), project, ...projects.slice(idx + 1)]);
     }
 
-    function saveRow(idx: number) {
-        setProjects((prev) => [...prev.slice(0, idx), { ...editableProject, edit: false }, ...prev.slice(idx + 1)]);
+    function closeEdit(idx: number) {
+        if (!projects) return;
+        setEdit(false);
+        setProjects([...projects.slice(0, idx), { ...projects[idx], edit: false }, ...projects.slice(idx + 1)]);
+        setEditableProject((prev) => ({ ...prev, edit: false }));
+    }
+
+    async function saveRow(idx: number) {
+        if (!projects) return;
+        try {
+            const { name, description, duration, id } = editableProject;
+            await updateProject(id, { name, description, duration });
+            toast.success('Usuario actualizado');
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                toast.error(err.message);
+            }
+            return;
+        }
+        setEdit(false);
+        setEditableProject((prev) => ({ ...prev, edit: false }));
+        setProjects([...projects.slice(0, idx), { ...editableProject, edit: false }, ...projects.slice(idx + 1)]);
+    }
+
+    function getDurationInDays(date1: string, date2: string) {
+        const duration = new Date(date1).getTime() - new Date(date2).getTime();
+        return Math.ceil(duration / (1000 * 60 * 60 * 24)) + ' días';
     }
     return (
         <div className="overflow-x-auto">
@@ -52,16 +56,16 @@ export default function ProjectTable() {
                         <th className="w-14"></th>
                         <th>Nombre</th>
                         <th className="w-64">Descripción</th>
-                        <th className="w-32"># de usuarios</th>
+                        <th className="w-32">Usuarios</th>
                         <th># de tareas</th>
                         <th>Duración</th>
                         <th>tags</th>
-                        <th className="w-48">fecha de creación</th>
+                        <th className="w-48">Inicio</th>
                     </tr>
                 </thead>
                 <tbody className="text-sm">
-                    {projects.map(
-                        ({ id, name, description, users, duration, numberOfTasks, tags, createdAt, edit }, idx) => {
+                    {projects?.map(
+                        ({ id, name, description, uid, numberOfTasks, duration, tags, createdAt, edit }, idx) => {
                             if (edit) {
                                 return (
                                     <tr key={id} className="hover">
@@ -72,7 +76,7 @@ export default function ProjectTable() {
                                                     className="cursor-pointer text-green-600"
                                                 />
                                             </button>
-                                            <button onClick={() => editProject(idx)} className="ml-2">
+                                            <button onClick={() => closeEdit(idx)} className="ml-2">
                                                 <FontAwesomeIcon
                                                     icon={faXmark}
                                                     className="cursor-pointer text-red-600"
@@ -102,36 +106,23 @@ export default function ProjectTable() {
                                                 className="bg-inherit input h-6 rounded-none pl-0"
                                             ></textarea>
                                         </td>
-                                        <td>{users.length}</td>
                                         <td>
-                                            <input
-                                                size={3}
-                                                type="number"
-                                                value={editableProject.numberOfTasks}
-                                                onChange={(e) =>
-                                                    setEditableProject((prev) => ({
-                                                        ...prev,
-                                                        numberOfTasks: parseInt(e.target.value, 10) || 0,
-                                                    }))
-                                                }
-                                                className="bg-inherit input h-6 rounded-none pl-0"
-                                            />
+                                            <ul>
+                                                {uid.map((uid) => (
+                                                    <li>{users?.find((user) => user.uid === uid)?.displayName}</li>
+                                                ))}
+                                            </ul>
                                         </td>
+                                        <td>{tasks?.filter(({ projectId }) => projectId === id).length || '0'}</td>
+                                        <td>{getDurationInDays(duration, createdAt)}</td>
                                         <td>
-                                            <input
-                                                size={10}
-                                                value={editableProject.duration}
-                                                onChange={(e) =>
-                                                    setEditableProject((prev) => ({
-                                                        ...prev,
-                                                        duration: e.target.value,
-                                                    }))
-                                                }
-                                                className="bg-inherit input h-6 rounded-none pl-0"
-                                            />
+                                            <ul>
+                                                {tags.map((tag) => (
+                                                    <li>{tag.tag.name}</li>
+                                                ))}
+                                            </ul>
                                         </td>
-                                        <td>{tags.length}</td>
-                                        <td>{createdAt}</td>
+                                        <td>{createdAt.slice(0, 10)}</td>
                                     </tr>
                                 );
                             }
@@ -144,11 +135,23 @@ export default function ProjectTable() {
                                     </td>
                                     <td>{name}</td>
                                     <td>{description}</td>
-                                    <td>{users.length}</td>
-                                    <td>{numberOfTasks}</td>
-                                    <td>{duration}</td>
-                                    <td>{tags.length}</td>
-                                    <td>{createdAt}</td>
+                                    <td>
+                                        <ul>
+                                            {uid.map((uid) => (
+                                                <li>{users?.find((user) => user.uid === uid)?.displayName}</li>
+                                            ))}
+                                        </ul>
+                                    </td>
+                                    <td>{tasks?.filter(({ projectId }) => projectId === id).length || '0'}</td>
+                                    <td>{getDurationInDays(duration, createdAt)}</td>
+                                    <td>
+                                        <ul>
+                                            {tags.map((tag) => (
+                                                <li>{tag.tag.name}</li>
+                                            ))}
+                                        </ul>
+                                    </td>
+                                    <td>{createdAt.slice(0, 10)}</td>
                                 </tr>
                             );
                         },
