@@ -14,7 +14,9 @@ class UserService {
             return authApp.createUser(user)
         }
         const {email, password, displayName} = user
-        return authApp.createUser({email, password, displayName})
+        const newUser = await authApp.createUser({email, password, displayName})
+        await authApp.setCustomUserClaims(newUser.uid, {admin: false})
+        return authApp.getUser(newUser.uid)
     }
 
     async updateOne(id: string, user: {email: string, password: string, displayName: string, phoneNumber: string}) {
@@ -22,6 +24,10 @@ class UserService {
     }
 
     async deleteOne(id: string) {
+        const user = await authApp.getUser(id)
+        if (user.customClaims?.admin) {
+            throw new Error("No puedes eliminar a otro administrador")
+        }
         return authApp.deleteUser(id)
     }
 }
